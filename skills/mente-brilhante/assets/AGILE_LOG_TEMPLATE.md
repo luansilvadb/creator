@@ -1,0 +1,15 @@
+# AGILE_LOG-001 [DD-MM-AAAA] v[SEMVER]
+
+### ÉPICOS / SPRINTS
+
+- **SPRINT_001:** CONCLUÍDA COM SUCESSO. [LOG DE ALTERAÇÕES CURTO]
+- **ROADMAP:** v1.0.0 INICIALIZADO.
+
+### SÍNTESE E AUDITORIA
+
+- [RESUMO DA AUDITORIA DE CÓDIGO E VALIDAÇÃO DE CONTRATOS]
+
+### ARQUIVAMENTO
+
+- `SPRINT_001_v1.0.0.md` arquivada em `history/archive/`.
+- `ROADMAP_v1.0.0.md` arquivado em `history/archive/`.

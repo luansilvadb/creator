@@ -1,39 +1,42 @@
-# Diretrizes de Especificação Técnica (Verbosidade Exaustiva)
+# DIRETRIZES DE ESPECIFICAÇÃO EXAUSTIVA (Ω)
 
-Para que a **Mente Brilhante Ω** funcione, o Tech Lead (usuário) não deve ter dúvidas sobre a implementação. As especificações em `.agile/spec/` devem conter:
+**OBJETIVO:** Eliminar 100% da ambiguidade. O Tech Lead deve ser um tradutor de lógica para código, nunca um tomador de decisão técnica sobre o "Como" sem base na spec.
 
-## 1. Contratos de Interface (API/Types)
-- **Definição exata**: Use blocos de código TypeScript/Python Typed.
-- **Exemplo**:
-  ```typescript
-  interface UserProfile {
-    id: string; // UUID v4
-    email: string; // Validated via regex
-    preferences?: JSON; // Optional, default {}
-  }
-  ```
+---
 
-## 2. Diagramas de Fluxo e Sequência (Texto/Mermaid)
-- **Ordem exata**: Descreva o "Happy Path" e os caminhos de erro.
-- **Exemplo**:
-  ```mermaid
-  sequenceDiagram
-    Client->>API: POST /login
-    API->>DB: Validate Creds
-    DB-->>API: Success
-    API-->>Client: JWT Token
-  ```
+## NÍVEL DE DETALHAMENTO: VERBOSIDADE DE LIVRO
 
-## 3. Regras de Negócio e Casos de Borda
-- **Não economize palavras**: Documente o que acontece se o banco estiver fora do ar ou se o usuário enviar dados duplicados.
+### 1. CONTRATOS TÉCNICOS (Obrigatório)
 
-## 4. Testes BDD (Behavior Driven Development)
-- **Cenário**: Login bem sucedido.
-- **Dado** que o usuário existe no banco com senha '123'.
-- **Quando** ele envia post para `/login` com '123'.
-- **Então** o status deve ser 200 e o token deve ser retornado.
+- Definição de Tipos Estritos (Typescript/Rust/Go).
+- Esquemas de Banco de Dados com índices e justificativas.
+- Contratos de API com payloads de exemplo e todos os HTTP Status Codes possíveis.
 
-### Padrão de Nomenclatura:
-`TECHNICAL_SPEC_V[X]_[DESCRIÇÃO].md`
-(Devem ser salvas obrigatoriamente em `.agile/spec/`)
+### 2. FLUXO DE EXECUÇÃO (Obrigatório)
 
+- Diagramas de Sequência em texto detalhando a jornada do dado.
+- Diagramas de Estado para entidades complexas.
+- Regras de Concorrência e Isolamento (Locks, Transações).
+
+### 3. LÓGICA DE NEGÓCIO E EDGE CASES
+
+- Mapeamento de todos os caminhos "Não-Felizes".
+- Tratamento de nulos, timeouts e falhas de rede.
+- BDD Exaustivo: Mínimo de 3 cenários por funcionalidade (Sucesso, Erro de Input, Erro de Sistema).
+
+### 4. OBSERVABILIDADE POR DESIGN
+
+- Definição exata de mensagens de Log.
+- Métricas de sucesso da funcionalidade (ex: Latência de escrita < 100ms).
+
+---
+
+## REGRAS DE OURO DA SPEC Ω
+
+- **Detalhamento Infinito:** Se há dúvida na implementação, a spec falhou.
+- **Tradução Direta:** O código deve ser o espelho da Spec.
+- **Vedações:** Proibido o uso de "A definir" ou "TBD". Se é TBD, é um BLOCKER que gera ADR.
+
+---
+
+[Ω] Especificações geradas sob estas diretrizes são imutáveis após commit na sprint.

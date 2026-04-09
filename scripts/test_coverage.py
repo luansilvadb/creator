@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
-Instruction Coverage Tester - Pure Skill Edition.
-Valida a integridade da System Instruction focando apenas nos protocolos e 
-capacidades reais da skill, sem depender de cabeçalhos sintéticos.
+Instruction Coverage Tester - Premium Edition.
+Valida a integridade da System Instruction com suporte a purificação terminológica.
 """
 
 import sys
@@ -11,8 +10,12 @@ import re
 from pathlib import Path
 
 def normalize_concept(name):
+    # 1. Remover extensão
     name = re.sub(r"\.(py|md|js|ts|sh|txt|json|yaml)$", "", name, flags=re.IGNORECASE)
-    return name.replace("_", " ").replace("-", " ").title()
+    # 2. Remover sufixos de sistema como _TEMPLATE ou template
+    name = re.sub(r"(_TEMPLATE|template|_template|TEMPLATE)$", "", name, flags=re.IGNORECASE)
+    # 3. Normalizar espaçamento e capitalização
+    return name.replace("_", " ").replace("-", " ").strip().title()
 
 def run_coverage_test(skill_path, bundle_path):
     skill_path = Path(skill_path).resolve()
@@ -29,7 +32,6 @@ def run_coverage_test(skill_path, bundle_path):
     skill_md = skill_path / "SKILL.md"
     if skill_md.exists():
         content = skill_md.read_text(encoding="utf-8")
-        # Busca o primeiro H1 do arquivo
         match = re.search(r"^#\s+(.*)", content, re.MULTILINE)
         if match:
             real_title = match.group(1).strip().lower()
@@ -53,16 +55,16 @@ def run_coverage_test(skill_path, bundle_path):
                 concept = normalize_concept(f)
                 targets.append((f"{rel_root}/{f}", concept.lower()))
 
-    print(f"🛡️  Auditando Cobertura: {bundle_path.name}")
+    print(f"🛡️  Auditando Cobertura Premium: {bundle_path.name}")
     print(f"📂  Skill Fonte: {skill_path.name}")
-    print("-" * 60)
+    print("-" * 65)
     
     total = len(targets)
     found_count = 0
     missing = []
 
     for original, concept in targets:
-        # Busca flexível: o conceito deve estar no texto
+        # Busca flexível: o conceito purificado deve estar no texto
         if concept in bundle_text:
             found_count += 1
             status = "✅ OK"
@@ -70,24 +72,24 @@ def run_coverage_test(skill_path, bundle_path):
             missing.append((original, concept))
             status = "❌ MISSING"
         
-        print(f"{status:10} | {original:35} -> '{concept}'")
+        print(f"{status:10} | {original:38} -> '{concept}'")
 
-    print("-" * 60)
+    print("-" * 65)
     coverage = (found_count / total) * 100 if total > 0 else 100
     print(f"📊 REPORT: {coverage:.1f}% COVERAGE")
-    print(f"🔍 {found_count} de {total} conceitos integrados.")
+    print(f"🔍 {found_count} de {total} conceitos purificados integrados.")
 
     if missing:
-        print("\n⚠️  ITENS AUSENTES NO BUNDLE (Verifique a abstração):")
+        print("\n⚠️  ALERTA DE COVERAGE:")
         for orig, concept in missing:
-            print(f"   - {orig} (Esperado: '{concept}')")
+            print(f"   - {orig} (Esperado conceito: '{concept}')")
         sys.exit(1)
     else:
-        print("\n✨ SUCESSO: Pure Skill Instruction validada com 100% de integridade!")
+        print("\n✨ FINALIZADO: System Instruction Purificada com 100% de Cobertura!")
         sys.exit(0)
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         print("Usage: python scripts/test_coverage.py <skill_folder> <bundle_file>")
         sys.exit(1)
-    run_coverage_test(sys.argv[1], sys.argv[2])
+    run_coverage_test(skill_path, bundle_path)

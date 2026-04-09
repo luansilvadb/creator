@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
-System Instruction Pure Compiler - Zero Synthetic Garbage Edition.
-Compila a skill em sua forma mais pura, removendo cabeçalhos inventados pelo 
-compilador e focando exclusivamente no conteúdo original processado.
+System Instruction Omega Distiller.
+Perfeição estética absoluta. Limpeza total de resíduos visuais e barras órfãs.
 """
 
 import sys
@@ -10,11 +9,30 @@ import re
 from pathlib import Path
 from quick_validate import validate_skill
 
-# Filtros Globais
 IGNORE_DIRS = {".git", ".gemini", ".agents", "__pycache__", "node_modules", "dist"}
 IGNORE_FILES = {".gitignore", "package-lock.json", "LICENSE", "README.md", "AGENTS.md"}
-TEXT_EXTS = {".md", ".txt", ".json", ".yaml", ".yml"}
-LOGIC_EXTS = {".py", ".sh", ".js", ".ts"}
+
+COGNITIVE_MAP = {
+    ".agile": "Núcleo de Inteligência",
+    "planning": "Camada de Planejamento Estratégico",
+    "sprints": "Ciclo de Execução Tática",
+    "spec": "Especificações Técnicas Detalhadas",
+    "history": "Arquivo de Memória Imutável",
+    "assets": "Padrões de Representação",
+    "core": "Núcleo de Inteligência",
+    "runtime": "Ambiente de Operação",
+    "releases": "Registros de Entrega",
+    "archive": "Repositório de Longo Prazo",
+    "scripts": "Capacidades Operacionais",
+    "archive_manager": "Archive Manager",
+    "mente-brilhante": "Mente Brilhante Ω",
+    "adrs": "Registros de Decisões Arquiteturais",
+    "current_sprint": "Ciclo de Sprint Ativo",
+    "roadmap": "Diretriz de Roadmap",
+    "backlog": "Backlog de Valor",
+    "story_map": "Mapeamento de Jornada",
+    "release_notes": "Notas de Entrega"
+}
 
 def strip_frontmatter(content):
     if content.startswith("---"):
@@ -26,122 +44,92 @@ def semantic_cleanup(text, is_markdown=True):
     if not text: return ""
     if not is_markdown: return text.strip()
 
-    # 1. Remover seções exclusivas para criadores
-    text = re.sub(r"\n## (Recursos|Resources|Files|Apoio|Folders|Instalação|Scripts|Referências|Assets).*?(?=\n## |$)", "", text, flags=re.DOTALL | re.IGNORECASE)
-    
-    # 2. Abstrair links de arquivos e caminhos técnicos
-    def abstract_path(match):
-        if match.group(1): return f"**{match.group(1)}**"
+    def atomic_callback(match):
+        label = match.group(1)
+        if label: return f"**{label}**"
         full_match = match.group(0)
-        filename = full_match.split('/')[-1]
-        name_only = re.sub(r"\.(py|md|js|ts|sh|txt|json|yaml)$", "", filename, flags=re.IGNORECASE)
-        return name_only.replace("_", " ").replace("-", " ").title()
+        atoms = [a for a in re.split(r'[/\\]', full_match) if a]
+        distilled = []
+        for atom in atoms:
+            clean = re.sub(r"\.(py|md|js|ts|sh|txt|json|yaml)$", "", atom, flags=re.IGNORECASE).lower().strip(".")
+            if clean in COGNITIVE_MAP:
+                distilled.append(f"**{COGNITIVE_MAP[clean]}**")
+            elif clean:
+                distilled.append(f"**{clean.replace('_', ' ').replace('-', ' ').title()}**")
+        return " ".join(distilled)
 
-    pattern = r"\[(.*?)\]\([^)]+\)|(?<![/\w])(?:[\w.-]+/)*[\w.-]+\.(?:py|md|js|ts|sh|txt|json|yaml)\b"
-    text = re.sub(pattern, abstract_path, text)
+    tech_patterns = "|".join([re.escape(k) for k in sorted(COGNITIVE_MAP.keys(), key=len, reverse=True)])
+    pattern = rf"\[(.*?)\]\([^)]+\)|(?<![\w/])(?:[\w.-]+/)*[\w.-]+\.(?:py|md|js|ts|sh|txt|json|yaml)\b|(?<![\w/])[\w.-]+\.(?:py|md|js|ts|sh|txt|json|yaml)\b|(?<![\w/])(?:[\w.-]+/)+|(?<![\w/])(?:{tech_patterns})\b"
     
-    # 3. Limpeza final
-    text = re.sub(r"\.(py|md|js|ts|sh|txt|json|yaml)\b", "", text, flags=re.IGNORECASE)
+    text = re.sub(pattern, atomic_callback, text, flags=re.IGNORECASE)
+
+    # LIMPEZA OMEGA
+    text = re.sub(r"\n## (Recursos|Resources|Files|Apoio|Folders|Instalação|Scripts|Referências|Assets).*?(?=\n## |$)", "", text, flags=re.DOTALL | re.IGNORECASE)
     text = re.sub(r"\[TODO:.*?\]", "", text)
+    text = re.sub(r'`\s*`', '', text) 
+    text = text.replace("**/", "**").replace("/**", "**") # Limpeza de barras órfãs
+    text = text.replace("- :", "-")
+    text = text.replace(" / ", " ")
+    text = re.sub(r' {2,}', ' ', text)
     
     return text.strip()
 
-def compile_pure_bundle(skill_path, output_file=None):
+def distill_script(script_path):
+    content = script_path.read_text(encoding="utf-8")
+    name = script_path.stem.replace("_", " ").upper()
+    doc = re.search(r'"""(.*?)"""', content, re.DOTALL)
+    desc = doc.group(1).strip() if doc else "Protocolo operacional autônomo."
+    actions = []
+    if "shutil.copy" in content: actions.append("Preservar a imutabilidade via espelhamento de estado.")
+    if "mkdir" in content: actions.append("Modularizar as camadas de persistência.")
+    if "datetime" in content: actions.append("Garantir a auditoria temporal dos registros.")
+    res = [f"### 🛠️ PROTOCOLO OPERACIONAL: {name}", f"**Essência**: {semantic_cleanup(desc)}"]
+    if actions: res.append("**Lógica de Execução**:\n" + "\n".join([f"- {a}" for a in actions]))
+    return "\n".join(res)
+
+def distill_reference(md_path):
+    content = strip_frontmatter(md_path.read_text(encoding="utf-8"))
+    title = md_path.stem.replace("_", " ").upper()
+    dense_lines = [l for l in content.split('\n') if l.strip().startswith(('#', '*', '-', '1.', '>')) or ':' in l]
+    return f"### 📚 CÂNONE DE CONHECIMENTO: {title}\n" + semantic_cleanup("\n".join(dense_lines))
+
+def distill_asset(md_path):
+    content = strip_frontmatter(md_path.read_text(encoding="utf-8"))
+    title = md_path.stem.replace("_TEMPLATE", "").replace("_", " ").upper()
+    return f"### 📜 GRAMÁTICA DE SAÍDA: {title}\n**Objetivo**: Padronização de artefato de entrega.\n**Modelo Obrigatório**:\n```markdown\n{content}\n```"
+
+def compile_omega_bundle(skill_path, output_file=None):
     skill_path = Path(skill_path).resolve()
-    if not skill_path.exists() or not skill_path.is_dir():
-        return None
-
-    print(f"💎 Compilando Pure Skill: {skill_path.name}")
+    print(f"💎 Consolidando Perfeição Omega: {skill_path.name}")
     validate_skill(skill_path)
-
-    bundle_content = []
-    
-    # --- 1. ARQUIVOS DA RAIZ (SKILL.md assume o topo) ---
-    # Priorizar o SKILL.md para ser o primeiro
+    bundle = []
     skill_md = skill_path / "SKILL.md"
     if skill_md.exists():
-        print("  [ROOT] Integrando Identidade (SKILL.md)")
-        content = strip_frontmatter(skill_md.read_text(encoding="utf-8"))
-        bundle_content.append(semantic_cleanup(content))
-        bundle_content.append("\n---\n")
-
-    # Outros arquivos na raiz
-    for file in sorted(skill_path.iterdir()):
-        if file.is_file() and file.name != "SKILL.md" and file.suffix in TEXT_EXTS and file.name not in IGNORE_FILES:
-            print(f"  [ROOT] Integrando: {file.name}")
-            content = strip_frontmatter(file.read_text(encoding="utf-8"))
-            bundle_content.append(f"# {file.stem.upper().replace('_', ' ')}")
-            if file.suffix in [".json", ".yaml", ".yml"]:
-                bundle_content.append(f"```json\n{content.strip()}\n```")
-            else:
-                bundle_content.append(semantic_cleanup(content, is_markdown=(file.suffix == ".md")))
-            bundle_content.append("\n")
-
-    # --- 2. VARREDURA DINÂMICA DE MÓDULOS ---
-    for item in sorted(skill_path.iterdir()):
-        if item.is_dir() and item.name not in IGNORE_DIRS:
-            section_title = item.name.replace("_", " ").replace("-", " ").upper()
-            print(f"📂  Processando Módulo: {section_title}")
-            
-            # Protocolos (.md, .txt)
-            md_files = sorted(list(item.rglob("*.md"))) + sorted(list(item.rglob("*.txt")))
-            if md_files:
-                for md_file in md_files:
-                    title = md_file.stem.replace("_", " ").replace("-", " ").upper()
-                    print(f"    - Protocolo: {title}")
-                    content = strip_frontmatter(md_file.read_text(encoding="utf-8"))
-                    bundle_content.append(f"# {title}")
-                    bundle_content.append(semantic_cleanup(content, is_markdown=(md_file.suffix == ".md")))
-                    bundle_content.append("\n")
-
-            # Dados (.json, .yaml)
-            data_files = sorted(list(item.rglob("*.json"))) + sorted(list(item.rglob("*.yaml"))) + sorted(list(item.rglob("*.yml")))
-            if data_files:
-                for data_file in data_files:
-                    title = data_file.name.upper()
-                    print(f"    - Dados: {title}")
-                    content = data_file.read_text(encoding="utf-8")
-                    bundle_content.append(f"## DATA: {title}")
-                    bundle_content.append(f"```json\n{content.strip()}\n```")
-                    bundle_content.append("\n")
-
-            # Scripts (Capacidades)
-            script_files = []
-            for ext in ["py", "sh", "js", "ts"]:
-                script_files.extend(list(item.rglob(f"*.{ext}")))
-            
-            if script_files:
-                bundle_content.append(f"# {section_title} CAPABILITIES")
-                for script in sorted(script_files):
-                    try:
-                        print(f"    - Capacidade: {script.name}")
-                        script_text = script.read_text(encoding="utf-8")
-                        doc_match = re.search(r'"""(.*?)"""', script_text, re.DOTALL)
-                        purpose = semantic_cleanup(doc_match.group(1).strip()) if doc_match else "Protocolo operacional."
-                        action_name = script.stem.replace("_", " ").replace("-", " ").upper()
-                        bundle_content.append(f"- **{action_name}**: {purpose}")
-                        usage = re.search(r"(Usage|Uso|Ex):.*?(?=\n|$)", script_text, re.IGNORECASE)
-                        if usage:
-                            bundle_content.append(f"  *Interface*: `{semantic_cleanup(usage.group(0).strip())}`")
-                    except: pass
-                bundle_content.append("\n")
-
-    # --- 3. FINALIZAÇÃO ---
+        bundle.append("# 🧠 MATRIZ DE IDENTIDADE")
+        bundle.append(semantic_cleanup(strip_frontmatter(skill_md.read_text(encoding="utf-8"))))
+        bundle.append("\n---\n")
+    for folder, category, distiller in [
+        ("assets", "🏛️ PADRÕES DE REPRESENTAÇÃO (GRAMÁTICAS)", distill_asset),
+        ("references", "📚 CÂNONES DE CONHECIMENTO", distill_reference),
+        ("scripts", "🛠️ COMPETÊNCIAS OPERACIONAIS (PROTOCOLOS)", distill_script)
+    ]:
+        dir_path = skill_path / folder
+        if dir_path.exists():
+            bundle.append(f"# {category}")
+            for ext in ["md", "py", "js", "sh"]:
+                for f in sorted(dir_path.glob(f"*.{ext}")):
+                    print(f"  [{folder.upper()}] Purificando {f.name}")
+                    bundle.append(distiller(f))
+            bundle.append("\n---\n")
     output_file = Path(output_file) if output_file else Path("dist/system-instruction.md")
     output_file.parent.mkdir(parents=True, exist_ok=True)
-
-    try:
-        raw_bundle = "\n".join(bundle_content)
-        raw_bundle = re.sub(r"\n{3,}", "\n\n", raw_bundle)
-        output_file.write_text(raw_bundle, encoding="utf-8")
-        print(f"\n[SUCCESS] Pure System Instruction compilada em: {output_file}")
-        
-        from test_coverage import run_coverage_test
-        run_coverage_test(skill_path, output_file)
-        return output_file
-    except Exception as e:
-        print(f"[ERROR] {e}")
-        return None
+    content = re.sub(r"\n{3,}", "\n\n", "\n".join(bundle))
+    content = re.sub(r'\n -', '\n  -', content)
+    output_file.write_text(content, encoding="utf-8")
+    print(f"\n[SUCCESS] Omega Intelligence Bundle Finalizado: {output_file}")
+    from test_coverage import run_coverage_test
+    run_coverage_test(skill_path, output_file)
+    return output_file
 
 if __name__ == "__main__":
-    compile_pure_bundle(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None)
+    compile_omega_bundle(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None)

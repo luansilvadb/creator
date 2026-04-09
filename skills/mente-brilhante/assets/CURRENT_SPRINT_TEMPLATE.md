@@ -1,35 +1,16 @@
-# 🏃 Sprint Backlog: [NOME_DA_SPRINT]
+# SPRINT-001: [NOME_DA_SPRINT] v[SEMVER]
 
-## 📊 Status da Sprint (Burndown View)
+**META:** [OBJETIVO FOCAL, EX: IMPLEMENTAÇÃO DO CORE AUTH JWT]
 
-```text
-Trabalho Restante (Pts)
-10 | *
-08 |   *
-06 |     *
-04 |       -
-02 |         -
-00 |___________ Dia
-     1 2 3 4 5
-```
-> *Ideal: `*` | Real: `-`*
+## BACKLOG DE EXECUÇÃO
 
----
+> ATENÇÃO: LÓGICA EXAUSTIVA, EDGE CASES E BDD
 
-## 📋 Kanban Board (Ω Visual)
+- [ ] **[TSK-01]** [AÇÃO/MÓDULO]
+- [ ] **[TSK-02]** [AÇÃO/MÓDULO]
 
-| TO DO (A Fazer) | DOING (Em Curso) | DONE (Pronto) |
-| :--- | :--- | :--- |
-| [US01] - Auth | [US02] - Database | [US00] - Setup |
-| [US03] - UI | | |
+## CRITÉRIOS DE ACEITE (AUDITORIA)
 
----
-
-## 🧭 Backlog da Sprint (Items Aceitos)
-- [ ] **[ID]**: [Título] (Prioridade: 🔴)
-- [ ] **[ID]**: [Título] (Prioridade: 🟡)
-
----
-
-## 🛡️ Impedimentos e Bloqueios
-*Nenhum reportado até o momento.*
+- [ ] TESTES UNITÁRIOS/INTEGRAÇÃO APROVADOS.
+- [ ] CONTRATOS DE INTERFACE/API VALIDADOS CONTRA A SPEC.
+- [ ] ZERO REGRESSÃO DETECTADA.
